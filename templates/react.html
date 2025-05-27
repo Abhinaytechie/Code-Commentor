@@ -1,0 +1,36 @@
+import React, { useState } from 'react';
+import './App.css';
+
+function App() {
+  const [file, setFile] = useState(null);
+  const [output, setOutput] = useState('');
+
+  const handleFileChange = (e) => setFile(e.target.files[0]);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const formData = new FormData();
+    formData.append("file", file);
+
+    const response = await fetch("http://localhost:8000/comment", {
+      method: "POST",
+      body: formData,
+    });
+
+    const data = await response.json();
+    setOutput(data.commented_code);
+  };
+
+  return (
+    <div className="App">
+      <h1>Code Commenting Tool</h1>
+      <form onSubmit={handleSubmit}>
+        <input type="file" onChange={handleFileChange} />
+        <button type="submit">Submit</button>
+      </form>
+      <pre>{output}</pre>
+    </div>
+  );
+}
+
+export default App;
